@@ -8,8 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -44,11 +42,12 @@ public class TicTacToe extends Application {
                     return false;
                 }
             }
-        } return true;
+        }
+        return true;
     }
 
     public boolean ifPlayerWon(char token) {
-        for (int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (board[i][0].getToken() == token && board[i][1].getToken() == token && board[i][2].getToken() == token ||
                     board[0][i].getToken() == token && board[1][i].getToken() == token && board[2][i].getToken() == token) {
                 return true;
@@ -59,62 +58,70 @@ public class TicTacToe extends Application {
                 board[0][2].getToken() == token && board[1][1].getToken() == token && board[2][0].getToken() == token) {
             return true;
 
-        } return false;
+        }
+        return false;
     }
-/*
-    public void computerMove(Cell[][] board) {
-        Cell[][] copyBoard = board;
-        List<Cell> bestMoves = new ArrayList<>();
-        bestMoves.addAll(board[1][1], board[0][0], board[2][2], board[0][2], board[2][2],
-                board[0][1], board[1][0], board[1][2], board[2][1]);
-
-
-    }
-*/
 
     public class Cell extends Pane {
 
         private char token = ' ';
+        private Random random = new Random();
 
         public Cell() {
             setStyle("-fx-border-color: black");
-            setPrefSize(100,100);
+            setPrefSize(100, 100);
             setOnMouseClicked(event -> mouseEvent());
+        }
+
+        private void computerMove() {
+            int randomRow = random.nextInt(10);
+            int randomColumn = random.nextInt(10);
+            board[randomRow][randomColumn].setToken(player);
         }
 
         public char getToken() {
             return token;
         }
 
-        public void setToken (char sign) {
+        public void setToken(char sign) {
             token = sign;
 
             if (token == 'X') {
                 Text text = new Text("X");
                 setShape(text);
-            }
-            else if (token == 'O') {
+            } else if (token == 'O') {
                 Text text = new Text("O");
                 setShape(text);
             }
         }
 
-        public void mouseEvent() {
+        private void mouseEvent() {
             if (token == ' ' && player != 'E') { //if cell is empty and game continues
-                setToken(player);
-                if(ifPlayerWon(player)) {
-                    player = 'E'; //end game
+                if (player == 'X') {
+                    setToken(player);
+                    checkState();
                 }
-                else if (isBoardFull()) {
-                    player = 'E';
-                }
-                else {
-                    //player = (player == 'X') ? 'O' : 'X';
-                    if (player == 'X') {
-                        player = 'O';
+            }
+        }
+
+        private void checkState() {
+            while (player != 'E') { //if game continues
+                if (player == 'X') { //if now is player's turn
+                    setOnMouseClicked(event -> mouseEvent());
+                    player = 'O';
+                    if (ifPlayerWon(player)) {
+                        player = 'E'; //end game
+                    } else if (isBoardFull()) {
+                        player = 'E';
                     }
-                    else {
-                        player = 'X';
+
+                } else if (player == 'O') { //if now is computer's turn
+                    computerMove();
+                    player = 'X';
+                    if (ifPlayerWon(player)) {
+                        player = 'E'; //end game
+                    } else if (isBoardFull()) {
+                        player = 'E';
                     }
                 }
             }
