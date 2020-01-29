@@ -35,18 +35,22 @@ public class TicTacToe extends Application {
         primaryStage.show();
     }
 
+    //determine if there is empty token
     public boolean isBoardFull() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (board[j][i].getToken() == ' ') {
-                    return false;
+                    return false; //continue game if there is empty token
                 }
             }
         }
-        return true;
+        return true; //break game if board if full
     }
 
+    //determine if any player won
     public boolean ifPlayerWon(char token) {
+
+        //horizontal or vertical
         for (int i = 0; i < 3; i++) {
             if (board[i][0].getToken() == token && board[i][1].getToken() == token && board[i][2].getToken() == token ||
                     board[0][i].getToken() == token && board[1][i].getToken() == token && board[2][i].getToken() == token) {
@@ -54,6 +58,7 @@ public class TicTacToe extends Application {
             }
         }
 
+        //diagonal
         if (board[0][0].getToken() == token && board[1][1].getToken() == token && board[2][2].getToken() == token ||
                 board[0][2].getToken() == token && board[1][1].getToken() == token && board[2][0].getToken() == token) {
             return true;
@@ -73,9 +78,10 @@ public class TicTacToe extends Application {
             setOnMouseClicked(event -> mouseEvent());
         }
 
+        //move of computer player
         private void computerMove() {
-            int randomRow = random.nextInt(10);
-            int randomColumn = random.nextInt(10);
+            int randomRow = random.nextInt(3);
+            int randomColumn = random.nextInt(3);
             board[randomRow][randomColumn].setToken(player);
         }
 
@@ -83,6 +89,7 @@ public class TicTacToe extends Application {
             return token;
         }
 
+        //setting tokens
         public void setToken(char sign) {
             token = sign;
 
@@ -95,12 +102,11 @@ public class TicTacToe extends Application {
             }
         }
 
+        //what happens when player clicks mouse
         private void mouseEvent() {
             if (token == ' ' && player != 'E') { //if cell is empty and game continues
-                if (player == 'X') {
                     setToken(player);
                     checkState();
-                }
             }
         }
 
@@ -108,20 +114,24 @@ public class TicTacToe extends Application {
             while (player != 'E') { //if game continues
                 if (player == 'X') { //if now is player's turn
                     setOnMouseClicked(event -> mouseEvent());
-                    player = 'O';
+
                     if (ifPlayerWon(player)) {
-                        player = 'E'; //end game
+                        player = 'E'; //end game if player won
                     } else if (isBoardFull()) {
-                        player = 'E';
+                        player = 'E'; //end game if there is no empty token
+                    } else {
+                        player = 'O'; //change player
                     }
 
                 } else if (player == 'O') { //if now is computer's turn
                     computerMove();
-                    player = 'X';
+
                     if (ifPlayerWon(player)) {
-                        player = 'E'; //end game
+                        player = 'E'; //end game if computer won
                     } else if (isBoardFull()) {
-                        player = 'E';
+                        player = 'E'; //end game if there is no empty token
+                    } else {
+                        player = 'X'; //change player
                     }
                 }
             }
