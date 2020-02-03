@@ -1,13 +1,18 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.scene.control.Button;
 
+import javax.swing.text.html.ImageView;
 import java.util.Random;
 
 
@@ -15,24 +20,47 @@ public class TicTacToe extends Application {
 
     private char player = 'X';
     private Cell[][] board = new Cell[3][3];
+    private Button button = new Button("Start new game");
+    private GridPane gridPane = new GridPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(50));
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setPadding(new Insets(50));
+
+        EventHandler<ActionEvent> buttonEvent = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                createNewBoard();
+            }
+        };
+        button.setOnAction(buttonEvent);
+
+        BorderPane.setAlignment(button, Pos.BOTTOM_CENTER);
+        borderPane.setBottom(button);
+        borderPane.setCenter(gridPane);
+
+
+
+        Scene scene = new Scene(borderPane, 500, 530);
+        primaryStage.setTitle("Tic Tac Toe Game");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public void createNewBoard() {
+        gridPane.getChildren().clear();
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 board[j][i] = new Cell();
                 gridPane.add(board[j][i], j, i);
+                player = 'X';
             }
         }
-
-        Scene scene = new Scene(gridPane, 400, 400);
-        primaryStage.setTitle("Tic Tac Toe Game");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     //determine if there is empty token
@@ -96,6 +124,8 @@ public class TicTacToe extends Application {
             if (token == 'X') {
                 Text text = new Text("X");
                 setShape(text);
+
+
             } else if (token == 'O') {
                 Text text = new Text("O");
                 setShape(text);
