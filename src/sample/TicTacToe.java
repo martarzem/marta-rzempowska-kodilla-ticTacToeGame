@@ -6,13 +6,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.control.Button;
 
-import javax.swing.text.html.ImageView;
 import java.util.Random;
 
 
@@ -21,12 +21,14 @@ public class TicTacToe extends Application {
     private char player = 'X';
     private Cell[][] board = new Cell[3][3];
     private Button button = new Button("Start new game");
+    private Label label = new Label("");
     private GridPane gridPane = new GridPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        gridPane.setPadding(new Insets(50));
+        gridPane.setPadding(new Insets(40));
+        gridPane.setAlignment(Pos.CENTER);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(50));
@@ -41,11 +43,14 @@ public class TicTacToe extends Application {
 
         BorderPane.setAlignment(button, Pos.BOTTOM_CENTER);
         borderPane.setBottom(button);
+
+        BorderPane.setAlignment(label, Pos.TOP_CENTER);
+        label.setFont(new Font(30));
+        borderPane.setTop(label);
+
         borderPane.setCenter(gridPane);
 
-
-
-        Scene scene = new Scene(borderPane, 500, 530);
+        Scene scene = new Scene(borderPane, 540, 550);
         primaryStage.setTitle("Tic Tac Toe Game");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -53,6 +58,7 @@ public class TicTacToe extends Application {
 
     public void createNewBoard() {
         gridPane.getChildren().clear();
+        label.setText("");
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -108,9 +114,15 @@ public class TicTacToe extends Application {
 
         //move of computer player
         private void computerMove() {
-            int randomRow = random.nextInt(3);
-            int randomColumn = random.nextInt(3);
-            board[randomRow][randomColumn].setToken(player);
+            int temp = 0;
+            while (temp == 0) {
+                int randomRow = random.nextInt(3);
+                int randomColumn = random.nextInt(3);
+                if (board[randomRow][randomColumn].getToken() == ' ') {
+                    board[randomRow][randomColumn].setToken(player);
+                    temp = 1;
+                }
+            }
         }
 
         public char getToken() {
@@ -124,11 +136,13 @@ public class TicTacToe extends Application {
             if (token == 'X') {
                 Text text = new Text("X");
                 setShape(text);
+                setStyle("-fx-border-color: blue");
 
 
             } else if (token == 'O') {
                 Text text = new Text("O");
                 setShape(text);
+                setStyle("-fx-border-color: red");
             }
         }
 
@@ -147,6 +161,7 @@ public class TicTacToe extends Application {
 
                     if (ifPlayerWon(player)) {
                         player = 'E'; //end game if player won
+                        label.setText("YOU WON!");
                     } else if (isBoardFull()) {
                         player = 'E'; //end game if there is no empty token
                     } else {
@@ -158,10 +173,12 @@ public class TicTacToe extends Application {
 
                     if (ifPlayerWon(player)) {
                         player = 'E'; //end game if computer won
+                        label.setText("YOU LOST!");
                     } else if (isBoardFull()) {
                         player = 'E'; //end game if there is no empty token
                     } else {
                         player = 'X'; //change player
+                        break;
                     }
                 }
             }
